@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
+    <listener>
+        <listener-class>com.toripizi.farmhub.configuration.listener.CreateDataStore</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>com.toripizi.farmhub.configuration.listener.CreateServices</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>com.toripizi.farmhub.configuration.listener.CreateControllers</listener-class>
+    </listener>
+
+    <context-param>
+        <param-name>resourcePath</param-name>
+        <param-value>/home/toripizi/Studies/sem7/farmhub/src/main/avatars/</param-value>
+    </context-param>
+</web-app>
