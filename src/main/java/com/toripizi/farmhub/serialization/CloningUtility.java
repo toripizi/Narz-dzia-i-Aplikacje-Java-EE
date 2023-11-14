@@ -1,5 +1,7 @@
 package com.toripizi.farmhub.serialization;
 
+import com.toripizi.farmhub.category.entity.Category;
+import jakarta.enterprise.context.Dependent;
 import lombok.SneakyThrows;
 import lombok.extern.java.Log;
 
@@ -13,6 +15,7 @@ import java.io.*;
  * without external libraries is serialization mechanism.
  */
 @Log
+@Dependent
 public class CloningUtility {
 
     /**
@@ -45,5 +48,4 @@ public class CloningUtility {
             return os;
         }
     }
-
 }

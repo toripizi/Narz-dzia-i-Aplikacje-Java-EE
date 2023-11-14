@@ -3,15 +3,21 @@ package com.toripizi.farmhub.farmer.service;
 import com.toripizi.farmhub.controller.servlet.exception.NotFoundException;
 import com.toripizi.farmhub.farmer.repository.FarmerRepository;
 import com.toripizi.farmhub.farmer.entity.Farmer;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import lombok.NoArgsConstructor;
 
 import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@ApplicationScoped
+@NoArgsConstructor(force = true)
 public class FarmerService {
     private final FarmerRepository repository;
 
+    @Inject
     public FarmerService(FarmerRepository repository) {
         this.repository = repository;
     }

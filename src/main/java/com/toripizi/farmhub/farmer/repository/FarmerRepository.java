@@ -1,98 +1,27 @@
 package com.toripizi.farmhub.farmer.repository;
 
-import com.toripizi.farmhub.configuration.ProjectPaths;
-import com.toripizi.farmhub.controller.servlet.exception.BadRequestException;
-import com.toripizi.farmhub.controller.servlet.exception.NotFoundException;
-import com.toripizi.farmhub.datastore.DataStore;
 import com.toripizi.farmhub.farmer.entity.Farmer;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class FarmerRepository {
+public interface FarmerRepository {
 
-    private final DataStore dataStore;
-    private final String resourcePath;
+    List<Farmer> findAll();
 
-    public FarmerRepository(DataStore dataStore, String resourcePath){
-        this.dataStore = dataStore;
-        this.resourcePath = resourcePath;
-    }
+    Optional<Farmer> find(UUID id);
 
-    public List<Farmer> findAll() {
-        return dataStore.findAllFarmers();
-    }
+    void create(Farmer farmer);
 
-    public Optional<Farmer> find(UUID id) {
-        return dataStore.findAllFarmers().stream()
-                .filter(farmer -> farmer.getId().equals(id))
-                .findFirst();
-    }
+    void update(Farmer farmer);
 
-    public void create(Farmer farmer) {
-        dataStore.createFarmer(farmer);
-    }
+    void delete(Farmer farmer);
 
-    public void update(Farmer farmer) {
-        dataStore.updateFarmer(farmer);
-    }
+    byte[] findAvatar(UUID id);
 
-    public void delete(Farmer farmer) {
-        dataStore.deleteFarmer(farmer.getId());
-    }
+    void updateAvatar(UUID id, InputStream is);
 
-    public byte[] findAvatar(UUID id) {
-        return getResource(id.toString() + ".png");
-    }
-
-    public void updateAvatar(UUID id, InputStream is) {
-        putResource(id.toString(), is);
-    }
-
-    public void deleteAvatar(UUID id) {
-        deleteResource(id.toString());
-    }
-
-
-    /**
-     * Metthods for resource management.
-     * @param name filename
-     */
-
-    private void deleteResource(String name) {
-        try {
-            Files.delete(
-                    ProjectPaths.getAvatarPath(name, this.resourcePath)
-            );
-        } catch (IOException ex) {
-            throw new NotFoundException(ex, "Could not find any resource of name: " + name);
-        }
-    }
-
-    private byte[] getResource(String name) {
-        try {
-            return Files.readAllBytes(
-                    ProjectPaths.getAvatarPath(name, this.resourcePath)
-            );
-        } catch (IOException ex) {
-            throw new NotFoundException(ex, "Could not find any resource of name: " + name);
-        }
-    }
-
-    private void putResource(String name, InputStream stream) {
-        try {
-            Files.write(
-                    ProjectPaths.getAvatarPath(name, this.resourcePath),
-                    stream.readAllBytes(),
-                    new StandardOpenOption[]{StandardOpenOption.CREATE}
-            );
-        } catch (IOException ex) {
-            throw new BadRequestException(ex, "Uploading avatar failed.");
-        }
-    }
+    void deleteAvatar(UUID id);
 }

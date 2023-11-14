@@ -1,87 +1,28 @@
 package com.toripizi.farmhub.farmer.controller;
 
-import com.toripizi.farmhub.controller.servlet.exception.BadRequestException;
-import com.toripizi.farmhub.controller.servlet.exception.NotFoundException;
 import com.toripizi.farmhub.farmer.dto.CreateFarmerRequest;
 import com.toripizi.farmhub.farmer.dto.GetFarmerResponse;
 import com.toripizi.farmhub.farmer.dto.GetFarmersResponse;
 import com.toripizi.farmhub.farmer.dto.UpdateFarmerRequest;
-import com.toripizi.farmhub.farmer.entity.Farmer;
-import com.toripizi.farmhub.farmer.service.FarmerService;
 
 import java.io.InputStream;
-import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
-import java.util.function.Function;
 
-public class FarmerController {
+public interface FarmerController {
+    GetFarmersResponse getFarmers();
 
-    private final FarmerService service;
+    GetFarmerResponse getFarmer(UUID id);
 
-    public FarmerController(FarmerService service) {
-        this.service = service;
-    }
+    void createFarmer(CreateFarmerRequest req);
 
-    public GetFarmersResponse getFarmers() {
-        List<Farmer> all = service.findAll();
-        Function<Collection<Farmer>, GetFarmersResponse> mapper = GetFarmersResponse.entityToDtoMapper();
-        return mapper.apply(all);
-    }
+    void updateFarmer(UUID id, UpdateFarmerRequest req);
 
-    public GetFarmerResponse getFarmer(UUID id) {
-        Function<Farmer, GetFarmerResponse> mapper = GetFarmerResponse.entityToDtoMapper();
-        Farmer farmer = service.find(id).orElseThrow(
-                () -> new NotFoundException("Could not find farmer of id: " + id.toString())
-        );
-        return mapper.apply(farmer);
-    }
+    void deleteFarmer(UUID id);
 
-    public void createFarmer(CreateFarmerRequest req) {
-        try {
-            service.create(
-                    CreateFarmerRequest.dtoToEntityMapper().apply(req)
-            );
-        } catch (IllegalArgumentException ex) {
-            throw new BadRequestException(ex);
-        }
-    }
+    byte[] getFarmerAvatar(UUID id);
 
-    public void updateFarmer(UUID id, UpdateFarmerRequest req) {
-        service.find(id).ifPresentOrElse(
-                entity -> service.update(
-                        UpdateFarmerRequest.dtoToEntityMapper().apply(entity, req)
-                ),
-                () -> {
-                    throw new NotFoundException("Could not find farmer of id: " + id.toString());
-                }
-        );
-    }
+    void putFarmerAvatar(UUID id, InputStream portrait);
 
-    public void deleteFarmer(UUID id) {
-        service.find(id).ifPresentOrElse(
-                entity -> service.delete(id),
-                () -> {
-                    throw new NotFoundException("Could not find farmer of id: " + id.toString());
-                }
-        );
-    }
-
-    public byte[] getFarmerAvatar(UUID id) {
-        return service.findAvatar(id);
-    }
-
-    public void putFarmerAvatar(UUID id, InputStream portrait) {
-        service.find(id).ifPresentOrElse(
-                entity -> service.updateAvatar(id, portrait),
-                () -> {
-                    throw new NotFoundException("Could not find farmer of id: " + id.toString());
-                }
-        );
-    }
-
-    public void deleteFarmerAvatar(UUID id) {
-        service.deleteAvatar(id);
-    }
+    void deleteFarmerAvatar(UUID id);
 
 }

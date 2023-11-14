@@ -1,4 +1,4 @@
-package com.toripizi.farmhub.controller.servlet.filter;
+package com.toripizi.farmhub.controller.filter;
 
 import com.toripizi.farmhub.controller.servlet.ApiServlet;
 import com.toripizi.farmhub.controller.servlet.exception.HttpRequestException;
