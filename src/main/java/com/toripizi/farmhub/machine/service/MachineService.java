@@ -42,4 +42,12 @@ public class MachineService {
                 () -> new NotFoundException("Could not find machine of id: " + id.toString())
         ));
     }
+
+    public void deleteByCategoryId(UUID id) {
+        repository.deleteByCategoryId(id);
+    }
+
+    public List<Machine> findAllByCategoryId(UUID id) {
+        return repository.findAllByCategoryId(id);
+    }
 }

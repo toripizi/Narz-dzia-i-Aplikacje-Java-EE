@@ -18,4 +18,8 @@ public interface MachineRepository {
     void update(Machine machine);
 
     void delete(Machine machine);
+
+    List<Machine> findAllByCategoryId(UUID id);
+
+    void deleteByCategoryId(UUID id);
 }

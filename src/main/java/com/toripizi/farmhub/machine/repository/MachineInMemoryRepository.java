@@ -8,6 +8,7 @@ import jakarta.inject.Inject;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class MachineInMemoryRepository implements MachineRepository {
@@ -43,5 +44,17 @@ public class MachineInMemoryRepository implements MachineRepository {
     @Override
     public void delete(Machine machine) {
         dataStore.deleteMachine(machine.getId());
+    }
+
+    @Override
+    public List<Machine> findAllByCategoryId(UUID id) {
+        return dataStore.findAllMachinery().stream()
+                .filter(machine -> machine.getCategory().getId().equals(id))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteByCategoryId(UUID id) {
+        this.findAllByCategoryId(id).forEach(machine -> dataStore.deleteMachine(machine.getId()));
     }
 }

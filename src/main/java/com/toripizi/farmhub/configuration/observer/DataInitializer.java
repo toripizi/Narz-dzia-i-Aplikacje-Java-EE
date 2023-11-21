@@ -14,6 +14,8 @@ import jakarta.inject.Inject;
 import jakarta.servlet.ServletContextListener;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @ApplicationScoped
@@ -109,7 +111,7 @@ public class DataInitializer implements ServletContextListener {
 
         Machine gruber = Machine.builder()
                 .id(UUID.fromString("b345e185-688c-43b4-a132-8bc8c7d8b313"))
-                .name("ursus_1634")
+                .name("gruber")
                 .whenProduced(LocalDate.of(2023, 1, 1))
                 .horsepower(0)
                 .category(kultywatory)
@@ -124,6 +126,11 @@ public class DataInitializer implements ServletContextListener {
                 .category(kombajny)
                 .farmer(farmer3)
                 .build();
+
+//        List<Machine> grubery = new ArrayList<>();
+//        grubery.add(gruber);
+//
+//        kultywatory.setMachinery(grubery);
 
         farmerService.create(farmer1);
         farmerService.create(farmer2);

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                template="/WEB-INF/template/main.xhtml">
+
+    <ui:define name="content">
+        <h:outputStylesheet library="machine" name="css/machine_list.css"/><!-- Automatically relocated to head. -->
+
+        <article class="text--justified">
+            <header><h2>Machinery</h2></header>
+
+            <h:dataTable value="#{machineList.machinery.machinery}" var="machine"
+                         styleClass="table align-middle mb-0 bg-white" headerClass="bg-dark text-light">
+
+                <h:column>
+                    <f:facet name="header">Name</f:facet>
+                    <h:outputText value="#{machine.name}"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Horse power</f:facet>
+                    <h:outputText value="#{machine.horsepower}"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">View</f:facet>
+                    <h:link outcome="/machine/machine_view.xhtml" value="View">
+                        <f:param name="id" value="#{machine.id}"/>
+                    </h:link>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Edit</f:facet>
+                    <h:link outcome="/machine/machine_edit.xhtml" value="Edit">
+                        <f:param name="id" value="#{machine.id}"/>
+                    </h:link>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Delete</f:facet>
+                    <h:form>
+                        <h:commandButton styleClass="btn btn-danger" value="Delete"
+                                         action="#{machineList.deleteAction(machine)}"/>
+                    </h:form>
+                </h:column>
+
+                <f:facet name="footer">
+                    <h:button styleClass="btn btn-primary" outcome="/machine/machine_create.xhtml"
+                              value="Create new machine"/>
+                </f:facet>
+            </h:dataTable>
+        </article>
+    </ui:define>
+
+</ui:composition>

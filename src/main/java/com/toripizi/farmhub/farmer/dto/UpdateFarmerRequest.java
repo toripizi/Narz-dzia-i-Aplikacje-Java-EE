@@ -2,8 +2,10 @@ package com.toripizi.farmhub.farmer.dto;
 
 import com.toripizi.farmhub.farmer.entity.Farmer;
 import com.toripizi.farmhub.farmer.entity.Role;
+import com.toripizi.farmhub.machine.entity.Machine;
 import lombok.*;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
@@ -20,6 +22,7 @@ public class UpdateFarmerRequest {
     private String login;
     private String password;
     private String role;
+    private List<Machine> machinery;
 
     public static BiFunction<Farmer, UpdateFarmerRequest, Farmer> dtoToEntityMapper() {
         return (farmer, req) -> Farmer.builder()
