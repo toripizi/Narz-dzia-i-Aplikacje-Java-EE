@@ -18,21 +18,18 @@ import java.util.function.BiFunction;
 @EqualsAndHashCode
 public class UpdateMachineRequest {
 
-    private UUID id;
     private String name;
     private LocalDate whenProduced;
     private Integer horsepower;
-    private Category category;
-    private Farmer farmer;
 
     public static BiFunction<Machine, UpdateMachineRequest, Machine> dtoToEntityMapper() {
         return (machine, req) -> Machine.builder()
-                .id(req.getId())
+                .id(machine.getId())
                 .name(req.getName())
                 .whenProduced(req.getWhenProduced())
                 .horsepower(req.getHorsepower())
-                .category(req.getCategory())
-                .farmer(req.getFarmer())
+                .category(machine.getCategory())
+                .farmer(machine.getFarmer())
                 .build();
     }
 }

@@ -4,25 +4,41 @@ import com.toripizi.farmhub.farmer.dto.CreateFarmerRequest;
 import com.toripizi.farmhub.farmer.dto.GetFarmerResponse;
 import com.toripizi.farmhub.farmer.dto.GetFarmersResponse;
 import com.toripizi.farmhub.farmer.dto.UpdateFarmerRequest;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 
 import java.io.InputStream;
 import java.util.UUID;
 
+@Path("farmers")
 public interface FarmerController {
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
     GetFarmersResponse getFarmers();
 
-    GetFarmerResponse getFarmer(UUID id);
+    @GET @Path("{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    GetFarmerResponse getFarmer(@PathParam("id") UUID id);
 
+    @POST
+    @Consumes({MediaType.APPLICATION_JSON})
     void createFarmer(CreateFarmerRequest req);
 
-    void updateFarmer(UUID id, UpdateFarmerRequest req);
+    @PUT @Path("{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    void updateFarmer(@PathParam("id")UUID id, UpdateFarmerRequest req);
 
-    void deleteFarmer(UUID id);
+    @DELETE  @Path("{id}")
+    void deleteFarmer(@PathParam("id") UUID id);
 
-    byte[] getFarmerAvatar(UUID id);
+    @GET @Path("{id}/avatar")
+    @Produces("image/png")
+    byte[] getFarmerAvatar(@PathParam("id") UUID id);
 
-    void putFarmerAvatar(UUID id, InputStream portrait);
+    @POST @Path("{id}/avatar")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    void putFarmerAvatar(@PathParam("id") UUID id, InputStream portrait);
 
-    void deleteFarmerAvatar(UUID id);
-
+    @DELETE @Path("{id}/avatar")
+    void deleteFarmerAvatar(@PathParam("id") UUID id);
 }

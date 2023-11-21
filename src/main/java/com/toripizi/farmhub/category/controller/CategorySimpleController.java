@@ -8,16 +8,15 @@ import com.toripizi.farmhub.category.entity.Category;
 import com.toripizi.farmhub.category.service.CategoryService;
 import com.toripizi.farmhub.controller.servlet.exception.BadRequestException;
 import com.toripizi.farmhub.controller.servlet.exception.NotFoundException;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.Path;
 
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
-@ApplicationScoped
+@Path("categories")
 public class CategorySimpleController implements CategoryController {
     private final CategoryService service;
 

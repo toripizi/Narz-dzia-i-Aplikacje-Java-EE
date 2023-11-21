@@ -15,14 +15,13 @@ import java.util.function.BiFunction;
 @EqualsAndHashCode
 public class UpdateCategoryRequest {
 
-    private UUID id;
     private String name;
     private Boolean isDrivable;
     private String machinery;
 
     public static BiFunction<Category, UpdateCategoryRequest, Category> dtoToEntityMapper() {
         return (category, req) -> Category.builder()
-                .id(req.getId())
+                .id(category.getId())
                 .name(req.getName())
                 .isDrivable(req.getIsDrivable())
                 .machinery(category.getMachinery())

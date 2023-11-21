@@ -8,8 +8,8 @@ import com.toripizi.farmhub.farmer.dto.GetFarmersResponse;
 import com.toripizi.farmhub.farmer.dto.UpdateFarmerRequest;
 import com.toripizi.farmhub.farmer.entity.Farmer;
 import com.toripizi.farmhub.farmer.service.FarmerService;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.Path;
 
 import java.io.InputStream;
 import java.util.Collection;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
-@ApplicationScoped
+@Path("farmers")
 public class FarmerSimpleController implements FarmerController {
     private final FarmerService service;
 
