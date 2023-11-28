@@ -8,7 +8,13 @@ import com.toripizi.farmhub.farmer.dto.GetFarmersResponse;
 import com.toripizi.farmhub.farmer.dto.UpdateFarmerRequest;
 import com.toripizi.farmhub.farmer.entity.Farmer;
 import com.toripizi.farmhub.farmer.service.FarmerService;
+import com.toripizi.farmhub.machine.dto.CreateMachineRequest;
+import com.toripizi.farmhub.machine.dto.GetMachineryResponse;
+import com.toripizi.farmhub.machine.entity.Machine;
+import com.toripizi.farmhub.machine.service.MachineService;
+import jakarta.ejb.EJB;
 import jakarta.inject.Inject;
+import jakarta.security.enterprise.identitystore.Pbkdf2PasswordHash;
 import jakarta.ws.rs.Path;
 
 import java.io.InputStream;
@@ -16,15 +22,25 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Path("farmers")
 public class FarmerSimpleController implements FarmerController {
-    private final FarmerService service;
-
+    private FarmerService service;
+    protected MachineService machineService;
     @Inject
-    public FarmerSimpleController(FarmerService service) {
-        this.service = service;
+    public Pbkdf2PasswordHash passwordHash;
+    @Inject
+    public FarmerSimpleController(Pbkdf2PasswordHash passwordHash) {
+        this.passwordHash = passwordHash;
     }
+
+    @EJB
+    public void setService(FarmerService service) { this.service = service; }
+
+    @EJB
+    public void setMachineService(MachineService machineService) { this.machineService = machineService; }
+
 
     @Override
     public GetFarmersResponse getFarmers() {
@@ -45,6 +61,7 @@ public class FarmerSimpleController implements FarmerController {
     @Override
     public void createFarmer(CreateFarmerRequest req) {
         try {
+            req.setPassword(passwordHash.generate(req.getPassword().toCharArray()));
             service.create(
                     CreateFarmerRequest.dtoToEntityMapper().apply(req)
             );
@@ -52,6 +69,17 @@ public class FarmerSimpleController implements FarmerController {
             throw new BadRequestException(ex);
         }
     }
+
+    @Override
+    public GetMachineryResponse getMachinery(UUID id) {
+        List<Machine> all = machineService.findAll();
+        List<Machine> filteredMachines = all.stream()
+                .filter(machine -> machine.getFarmer().getId().equals(id))
+                .collect(Collectors.toList());
+        Function<Collection<Machine>, GetMachineryResponse> mapper = GetMachineryResponse.entityToDtoMapper();
+        return mapper.apply(filteredMachines);
+    }
+
 
     @Override
     public void updateFarmer(UUID id, UpdateFarmerRequest req) {

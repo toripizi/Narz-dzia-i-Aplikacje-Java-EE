@@ -1,8 +1,10 @@
 package com.toripizi.farmhub.farmer.repository;
 
 import com.toripizi.farmhub.farmer.entity.Farmer;
+import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 
 import java.io.InputStream;
@@ -10,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@RequestScoped
+@Dependent
 public class FarmerPersistenceRepository implements FarmerRepository {
 
     private EntityManager em;
@@ -28,6 +30,17 @@ public class FarmerPersistenceRepository implements FarmerRepository {
     @Override
     public Optional<Farmer> find(UUID id) {
         return Optional.ofNullable(em.find(Farmer.class, id));
+    }
+
+    @Override
+    public Optional<Farmer> findByLogin(String login) {
+        try {
+            return Optional.of(em.createQuery("select f from Farmer f where f.login = :login", Farmer.class)
+                    .setParameter("login", login)
+                    .getSingleResult());
+        } catch (NoResultException ex) {
+            return Optional.empty();
+        }
     }
 
     @Override

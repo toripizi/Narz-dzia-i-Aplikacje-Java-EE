@@ -16,6 +16,7 @@ public class UpdateMachineWithModelFunction implements BiFunction<Machine, Machi
                 .name(model.getName())
                 .whenProduced(LocalDate.parse(model.getWhenProduced()))
                 .horsepower(model.getHorsepower())
+                .farmer(entity.getFarmer())
                 .category(entity.getCategory())
                 .build();
     }

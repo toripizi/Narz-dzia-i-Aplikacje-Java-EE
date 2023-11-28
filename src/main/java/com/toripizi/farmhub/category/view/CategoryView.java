@@ -4,9 +4,11 @@ import com.toripizi.farmhub.category.entity.Category;
 import com.toripizi.farmhub.category.model.CategoryModel;
 import com.toripizi.farmhub.category.model.function.CategoryToModelFunction;
 import com.toripizi.farmhub.category.service.CategoryService;
+import com.toripizi.farmhub.machine.entity.Machine;
 import com.toripizi.farmhub.machine.model.MachineryModel;
 import com.toripizi.farmhub.machine.model.functions.MachineryToModelFunction;
 import com.toripizi.farmhub.machine.service.MachineService;
+import jakarta.ejb.EJB;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
@@ -17,20 +19,21 @@ import lombok.Setter;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @ViewScoped
 @Named
 public class CategoryView implements Serializable {
-    private final CategoryService categoryService;
-    private final MachineService machineService;
+    private CategoryService categoryService;
+    private MachineService machineService;
 
-    @Inject
-    public CategoryView(CategoryService categoryService, MachineService machineService) {
-        this.categoryService = categoryService;
-        this.machineService = machineService;
-    }
+    @EJB
+    public void setCategoryService(CategoryService categoryService) { this.categoryService = categoryService; }
+
+    @EJB
+    public void setMachineService(MachineService machineService) { this.machineService = machineService; }
 
     @Setter
     @Getter
@@ -58,7 +61,8 @@ public class CategoryView implements Serializable {
     public MachineryModel getMachinery() {
         if (machinery == null) {
             MachineryToModelFunction function = new MachineryToModelFunction();
-            machineService.findAllByCategoryId(id).ifPresent(machineryList -> machinery = function.apply(machineryList));
+            List<Machine> machineList = machineService.findAllByCategoryForCallerPrincipal(id);
+            machinery = function.apply(machineList);
         }
         return machinery;
     }

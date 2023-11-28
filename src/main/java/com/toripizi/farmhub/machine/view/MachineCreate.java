@@ -7,6 +7,7 @@ import com.toripizi.farmhub.category.service.CategoryService;
 import com.toripizi.farmhub.machine.model.MachineCreateModel;
 import com.toripizi.farmhub.machine.model.functions.ModelToMachineFunction;
 import com.toripizi.farmhub.machine.service.MachineService;
+import jakarta.ejb.EJB;
 import jakarta.enterprise.context.Conversation;
 import jakarta.enterprise.context.ConversationScoped;
 import jakarta.inject.Inject;
@@ -26,8 +27,8 @@ import java.util.stream.Collectors;
 @Log
 @NoArgsConstructor(force = true)
 public class MachineCreate implements Serializable {
-    private final MachineService machineService;
-    private final CategoryService categoryService;
+    private MachineService machineService;
+    private CategoryService categoryService;
 
     @Getter
     private MachineCreateModel machine;
@@ -37,10 +38,14 @@ public class MachineCreate implements Serializable {
 
     private final Conversation conversation;
 
+    @EJB
+    public void setMachineService(MachineService machineService) {this.machineService = machineService;}
+
+    @EJB
+    public void setCategoryService(CategoryService categoryService) {this.categoryService = categoryService;}
+
     @Inject
-    public MachineCreate(MachineService machineService, CategoryService categoryService, Conversation conversation) {
-        this.machineService = machineService;
-        this.categoryService = categoryService;
+    public MachineCreate(Conversation conversation) {
         this.conversation = conversation;
     }
 
@@ -64,7 +69,7 @@ public class MachineCreate implements Serializable {
     public String saveAction() {
         ModelToMachineFunction function = new ModelToMachineFunction();
         Optional<Category> o = categoryService.find(machine.getCategoryId());
-        machineService.create(function.apply(machine, o.get()));
+        machineService.createForCallerPrincipal(function.apply(machine, o.get()));
         conversation.end();
         return "/category/category_list.xhtml?faces-redirect=true";
     }

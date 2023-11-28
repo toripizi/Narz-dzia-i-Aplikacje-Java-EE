@@ -18,6 +18,7 @@ import java.util.function.Function;
 @EqualsAndHashCode
 public class CreateMachineRequest {
 
+    private String id;
     private String name;
     private String whenProduced;
     private Integer horsepower;
@@ -26,7 +27,7 @@ public class CreateMachineRequest {
 
     public static Function<CreateMachineRequest, Machine> dtoToEntityMapper() {
         return req -> Machine.builder()
-                .id(UUID.randomUUID())
+                .id(UUID.fromString(req.getId()))
                 .name(req.getName())
                 .whenProduced(LocalDate.parse(req.getWhenProduced()))
                 .horsepower(req.getHorsepower())

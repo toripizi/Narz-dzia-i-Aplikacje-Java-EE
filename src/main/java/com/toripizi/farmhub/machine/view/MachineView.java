@@ -4,6 +4,7 @@ import com.toripizi.farmhub.machine.entity.Machine;
 import com.toripizi.farmhub.machine.model.MachineModel;
 import com.toripizi.farmhub.machine.model.functions.MachineToModelFunction;
 import com.toripizi.farmhub.machine.service.MachineService;
+import jakarta.ejb.EJB;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
@@ -20,12 +21,10 @@ import java.util.UUID;
 @ViewScoped
 @Named
 public class MachineView implements Serializable {
-    private final MachineService machineService;
+    private MachineService machineService;
 
-    @Inject
-    public MachineView(MachineService machineService) {
-        this.machineService = machineService;
-    }
+    @EJB
+    public void setMachineService(MachineService machineService) {this.machineService = machineService;}
 
     @Setter
     @Getter
@@ -35,7 +34,7 @@ public class MachineView implements Serializable {
     private MachineModel machine;
 
     public void init() throws IOException {
-        Optional<Machine> machine = machineService.find(id);
+        Optional<Machine> machine = machineService.findForCallerPrincipal(id);
         if (machine.isPresent()) {
             MachineToModelFunction function = new MachineToModelFunction();
             this.machine = function.apply(machine.get());

@@ -21,12 +21,16 @@ public class Farmer implements Serializable {
     @Id
     private UUID id;
 
+    @Column(unique = true)
     private String login;
 
     @ToString.Exclude
     private String password;
 
-    private Role role;
+    @CollectionTable(name = "farmers__roles", joinColumns = @JoinColumn(name = "id"))
+    @Column(name = "role")
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> roles;
 
     @ToString.Exclude//It's common to exclude lists from toString
     @EqualsAndHashCode.Exclude

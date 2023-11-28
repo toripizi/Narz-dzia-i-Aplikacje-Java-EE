@@ -1,8 +1,11 @@
 package com.toripizi.farmhub.farmer.dto;
 
 import com.toripizi.farmhub.farmer.entity.Farmer;
-import com.toripizi.farmhub.farmer.entity.Role;
+import com.toripizi.farmhub.farmer.entity.FarmerRoles;
 import com.toripizi.farmhub.machine.entity.Machine;
+import jakarta.inject.Inject;
+import jakarta.security.enterprise.SecurityContext;
+import jakarta.security.enterprise.identitystore.Pbkdf2PasswordHash;
 import lombok.*;
 
 import java.util.List;
@@ -18,19 +21,18 @@ import java.util.function.Function;
 @EqualsAndHashCode
 public class CreateFarmerRequest {
 
-    private UUID id;
+    private String id;
     private String login;
     private String password;
-    private String role;
-    private List<Machine> machinery;
+    private List<String> roles;
 
     public static Function<CreateFarmerRequest, Farmer> dtoToEntityMapper() {
         return req -> Farmer.builder()
-                .id(req.getId())
+                .id(UUID.fromString(req.getId()))
                 .login(req.getLogin())
                 .password(req.getPassword())
-                .role(Role.valueOf(req.getRole()))
-                .machinery(req.getMachinery())
+                .roles(req.getRoles())
                 .build();
     }
+
 }

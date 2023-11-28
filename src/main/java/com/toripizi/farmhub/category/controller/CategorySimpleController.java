@@ -8,6 +8,7 @@ import com.toripizi.farmhub.category.entity.Category;
 import com.toripizi.farmhub.category.service.CategoryService;
 import com.toripizi.farmhub.controller.servlet.exception.BadRequestException;
 import com.toripizi.farmhub.controller.servlet.exception.NotFoundException;
+import jakarta.ejb.EJB;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Path;
 
@@ -18,10 +19,10 @@ import java.util.function.Function;
 
 @Path("categories")
 public class CategorySimpleController implements CategoryController {
-    private final CategoryService service;
+    private CategoryService service;
 
-    @Inject
-    public CategorySimpleController(CategoryService service) {
+    @EJB
+    public void setService(CategoryService service) {
         this.service = service;
     }
 

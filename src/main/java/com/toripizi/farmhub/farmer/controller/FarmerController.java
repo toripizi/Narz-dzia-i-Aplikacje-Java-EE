@@ -4,6 +4,7 @@ import com.toripizi.farmhub.farmer.dto.CreateFarmerRequest;
 import com.toripizi.farmhub.farmer.dto.GetFarmerResponse;
 import com.toripizi.farmhub.farmer.dto.GetFarmersResponse;
 import com.toripizi.farmhub.farmer.dto.UpdateFarmerRequest;
+import com.toripizi.farmhub.machine.dto.GetMachineryResponse;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 
@@ -19,6 +20,9 @@ public interface FarmerController {
     @GET @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     GetFarmerResponse getFarmer(@PathParam("id") UUID id);
+
+    @GET @Path("{id}/machinery")
+    GetMachineryResponse getMachinery(@PathParam("id") UUID id);
 
     @POST
     @Consumes({MediaType.APPLICATION_JSON})

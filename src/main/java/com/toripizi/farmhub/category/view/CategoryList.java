@@ -3,6 +3,7 @@ package com.toripizi.farmhub.category.view;
 import com.toripizi.farmhub.category.model.CategoriesModel;
 import com.toripizi.farmhub.category.model.function.CategoriesToModelFunction;
 import com.toripizi.farmhub.category.service.CategoryService;
+import jakarta.ejb.EJB;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -10,14 +11,16 @@ import jakarta.inject.Named;
 @RequestScoped
 @Named
 public class CategoryList {
-    private final CategoryService categoryService;
+    private CategoryService categoryService;
     private CategoriesModel categories;
 
     @Inject
-    public CategoryList(CategoryService categoryService, CategoriesModel categories) {
-        this.categoryService = categoryService;
+    public CategoryList(CategoriesModel categories) {
         this.categories = categories;
     }
+
+    @EJB
+    public void setCategoryService(CategoryService categoryService) { this.categoryService = categoryService; }
 
     public CategoriesModel getCategories() {
         if (categories.getCategories() == null) {

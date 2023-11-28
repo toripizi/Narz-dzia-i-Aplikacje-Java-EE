@@ -13,6 +13,8 @@ public interface FarmerRepository {
 
     Optional<Farmer> find(UUID id);
 
+    Optional<Farmer> findByLogin(String login);
+
     void create(Farmer farmer);
 
     void update(Farmer farmer);

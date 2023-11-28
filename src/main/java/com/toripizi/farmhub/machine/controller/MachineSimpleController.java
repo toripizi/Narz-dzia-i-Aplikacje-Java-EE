@@ -9,6 +9,7 @@ import com.toripizi.farmhub.machine.dto.GetMachineResponse;
 import com.toripizi.farmhub.machine.dto.UpdateMachineRequest;
 import com.toripizi.farmhub.machine.entity.Machine;
 import com.toripizi.farmhub.machine.service.MachineService;
+import jakarta.ejb.EJB;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -20,17 +21,19 @@ import java.util.stream.Collectors;
 
 @Path("categories/{categoryId}/machinery")
 public class MachineSimpleController implements MachineController {
-    private final MachineService machineService;
-    private final CategoryService categoryService;
+    private MachineService machineService;
+    private CategoryService categoryService;
 
     @PathParam("categoryId")
     private String categoryId;
 
-    @Inject
-    public MachineSimpleController(MachineService machineService, CategoryService categoryService) {
+    @EJB
+    public void setCategoryService(MachineService machineService) {
         this.machineService = machineService;
-        this.categoryService = categoryService;
     }
+
+    @EJB
+    public void setMachineService(CategoryService categoryService) { this.categoryService = categoryService; }
 
     @Override
     public GetMachineryResponse getMachinery() {
@@ -45,7 +48,7 @@ public class MachineSimpleController implements MachineController {
 
     @Override
     public GetMachineResponse getMachine(UUID id) {
-        Machine machine = machineService.find(id).filter(
+        Machine machine = machineService.findForCallerPrincipal(id).filter(
             the_machine -> the_machine.getCategory().getId().equals(UUID.fromString(this.categoryId))
         ).orElseThrow(
             () -> new jakarta.ws.rs.NotFoundException("Could not find machine of id: " + id.toString())

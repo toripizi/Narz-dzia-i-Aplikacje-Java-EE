@@ -5,6 +5,7 @@ import com.toripizi.farmhub.machine.model.MachineEditModel;
 import com.toripizi.farmhub.machine.model.functions.MachineToEditModelFunction;
 import com.toripizi.farmhub.machine.model.functions.UpdateMachineWithModelFunction;
 import com.toripizi.farmhub.machine.service.MachineService;
+import jakarta.ejb.EJB;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
@@ -21,7 +22,10 @@ import java.util.UUID;
 @ViewScoped
 @Named
 public class MachineEdit implements Serializable {
-    private final MachineService machineService;
+    private MachineService machineService;
+
+    @EJB
+    public void setMachineService(MachineService machineService) {this.machineService = machineService;}
 
     @Setter
     @Getter
@@ -30,13 +34,8 @@ public class MachineEdit implements Serializable {
     @Getter
     private MachineEditModel machine;
 
-    @Inject
-    public MachineEdit(MachineService machineService) {
-        this.machineService = machineService;
-    }
-
     public void init() throws IOException {
-        Optional<Machine> machine = machineService.find(id);
+        Optional<Machine> machine = machineService.findForCallerPrincipal(id);
         if (machine.isPresent()) {
             MachineToEditModelFunction function = new MachineToEditModelFunction();
             this.machine = function.apply(machine.get());
@@ -47,7 +46,7 @@ public class MachineEdit implements Serializable {
 
     public String saveAction() {
         UpdateMachineWithModelFunction function = new UpdateMachineWithModelFunction();
-        machineService.update(function.apply(machineService.find(id).orElseThrow(), machine));
+        machineService.update(function.apply(machineService.findForCallerPrincipal(id).orElseThrow(), machine));
         return FacesContext.getCurrentInstance().getViewRoot().getViewId() + "?faces-redirect=true&includeViewParams=true";
     }
 }
