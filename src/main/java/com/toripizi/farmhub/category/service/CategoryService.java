@@ -2,12 +2,12 @@ package com.toripizi.farmhub.category.service;
 
 import com.toripizi.farmhub.category.entity.Category;
 import com.toripizi.farmhub.category.repository.CategoryRepository;
-import com.toripizi.farmhub.controller.servlet.exception.NotFoundException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.NotFoundException;
 import lombok.NoArgsConstructor;
 
-import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -15,31 +15,35 @@ import java.util.UUID;
 @ApplicationScoped
 @NoArgsConstructor(force = true)
 public class CategoryService {
-    private final CategoryRepository repository;
+
+    private final CategoryRepository categoryRepository;
 
     @Inject
-    public CategoryService(CategoryRepository repository) {
-        this.repository = repository;
+    public CategoryService(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
     }
 
     public List<Category> findAll() {
-        return repository.findAll();
+        return categoryRepository.findAll();
     }
 
     public Optional<Category> find(UUID id) {
-        return repository.find(id);
+        return categoryRepository.find(id);
     }
 
+    @Transactional
     public void create(Category category) {
-        repository.create(category);
+        categoryRepository.create(category);
     }
 
+    @Transactional
     public void update(Category category) {
-        repository.update(category);
+        categoryRepository.update(category);
     }
 
+    @Transactional
     public void delete(UUID id) {
-        repository.delete(repository.find(id).orElseThrow(
+        categoryRepository.delete(categoryRepository.find(id).orElseThrow(
                 () -> new NotFoundException("Could not find category of id: " + id.toString())
         ));
     }

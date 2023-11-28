@@ -9,13 +9,12 @@ import com.toripizi.farmhub.machine.entity.Machine;
 import com.toripizi.farmhub.machine.service.MachineService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.Initialized;
+import jakarta.enterprise.context.control.RequestContextController;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.servlet.ServletContextListener;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @ApplicationScoped
@@ -25,11 +24,14 @@ public class DataInitializer implements ServletContextListener {
     private final CategoryService categoryService;
     private final MachineService machineService;
 
+    private final RequestContextController requestContextController;
+
     @Inject
-    public DataInitializer(FarmerService farmerService, CategoryService categoryService, MachineService machineService) {
+    public DataInitializer(FarmerService farmerService, CategoryService categoryService, MachineService machineService, RequestContextController requestContextController) {
         this.farmerService = farmerService;
         this.categoryService = categoryService;
         this.machineService = machineService;
+        this.requestContextController = requestContextController;
     }
 
     public void contextInitialized(@Observes @Initialized(ApplicationScoped.class) Object init) {
@@ -37,6 +39,8 @@ public class DataInitializer implements ServletContextListener {
     }
 
     private void init() {
+        requestContextController.activate();
+
         /* create Farmers */
         Farmer farmer1 = Farmer.builder()
                 .id(UUID.fromString("ba735cb3-a7e6-44b3-87da-19a47ea4202b"))
@@ -127,10 +131,10 @@ public class DataInitializer implements ServletContextListener {
                 .farmer(farmer3)
                 .build();
 
-//        List<Machine> grubery = new ArrayList<>();
-//        grubery.add(gruber);
-//
-//        kultywatory.setMachinery(grubery);
+
+        farmerService.findAll().forEach(farmer -> farmerService.delete(farmer.getId()));
+        categoryService.findAll().forEach(category -> categoryService.delete(category.getId()));
+        machineService.findAll().forEach(machine -> machineService.delete(machine.getId()));
 
         farmerService.create(farmer1);
         farmerService.create(farmer2);
@@ -146,5 +150,7 @@ public class DataInitializer implements ServletContextListener {
         machineService.create(zetor);
         machineService.create(gruber);
         machineService.create(new_holland_5070);
+
+        requestContextController.deactivate();
     }
 }

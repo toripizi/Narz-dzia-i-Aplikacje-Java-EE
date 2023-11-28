@@ -1,6 +1,7 @@
 package com.toripizi.farmhub.machine.controller;
 
-import com.toripizi.farmhub.controller.servlet.exception.BadRequestException;
+import com.toripizi.farmhub.category.entity.Category;
+import com.toripizi.farmhub.category.service.CategoryService;
 import com.toripizi.farmhub.controller.servlet.exception.NotFoundException;
 import com.toripizi.farmhub.machine.dto.CreateMachineRequest;
 import com.toripizi.farmhub.machine.dto.GetMachineryResponse;
@@ -13,28 +14,32 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Path("categories/{categoryId}/machinery")
 public class MachineSimpleController implements MachineController {
     private final MachineService machineService;
+    private final CategoryService categoryService;
 
     @PathParam("categoryId")
     private String categoryId;
 
     @Inject
-    public MachineSimpleController(MachineService machineService) {
+    public MachineSimpleController(MachineService machineService, CategoryService categoryService) {
         this.machineService = machineService;
+        this.categoryService = categoryService;
     }
 
     @Override
     public GetMachineryResponse getMachinery() {
-        Stream<Machine> machinery = machineService.findAll().stream().filter(
-            machine -> machine.getCategory().getId().equals(UUID.fromString(this.categoryId))
-        );
-        List<Machine> all = machinery.collect(Collectors.toList());
+        List<Machine> all = machineService.findAll().stream().filter(
+                machine -> machine.getCategory().getId().equals(UUID.fromString(this.categoryId))
+        ).collect(Collectors.toList());
+        if (all.isEmpty()) {
+            throw new jakarta.ws.rs.NotFoundException("Could not find machinery of category id: " + this.categoryId);
+        }
         return GetMachineryResponse.entityToDtoMapper().apply(all);
     }
 
@@ -50,11 +55,18 @@ public class MachineSimpleController implements MachineController {
 
     @Override
     public void createMachine(CreateMachineRequest req) {
-        req.setCategoryId(this.categoryId);
-        try {
-            machineService.create(CreateMachineRequest.dtoToEntityMapper().apply(req));
-        } catch (IllegalArgumentException ex) {
-            throw new BadRequestException(ex);
+        Optional<Category> category = categoryService.find(UUID.fromString(this.categoryId));
+        if (category.isPresent()) {
+            req.setCategoryId(UUID.fromString(this.categoryId));
+            try {
+                machineService.create(
+                        CreateMachineRequest.dtoToEntityMapper().apply(req)
+                );
+            } catch (IllegalArgumentException ex) {
+                throw new jakarta.ws.rs.BadRequestException(ex);
+            }
+        } else {
+            throw new jakarta.ws.rs.BadRequestException("Could not find category of id: " + this.categoryId);
         }
     }
 

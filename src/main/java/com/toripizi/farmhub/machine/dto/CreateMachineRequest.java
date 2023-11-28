@@ -18,24 +18,23 @@ import java.util.function.Function;
 @EqualsAndHashCode
 public class CreateMachineRequest {
 
-    private String id;
     private String name;
     private String whenProduced;
     private Integer horsepower;
-    private String categoryId;
-    private String farmerId;
+    private UUID categoryId;
+    private UUID farmerId;
 
     public static Function<CreateMachineRequest, Machine> dtoToEntityMapper() {
         return req -> Machine.builder()
-                .id(UUID.fromString(req.getId()))
+                .id(UUID.randomUUID())
                 .name(req.getName())
                 .whenProduced(LocalDate.parse(req.getWhenProduced()))
                 .horsepower(req.getHorsepower())
                 .category(Category.builder()
-                        .id(UUID.fromString(req.getCategoryId()))
+                        .id(req.getCategoryId())
                         .build())
                 .farmer(Farmer.builder()
-                        .id(UUID.fromString(req.getFarmerId()))
+                        .id(req.getFarmerId())
                         .build())
                 .build();
     }

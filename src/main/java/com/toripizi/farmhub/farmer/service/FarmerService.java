@@ -5,6 +5,7 @@ import com.toripizi.farmhub.farmer.repository.FarmerRepository;
 import com.toripizi.farmhub.farmer.entity.Farmer;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import lombok.NoArgsConstructor;
 
 import java.io.InputStream;
@@ -30,14 +31,17 @@ public class FarmerService {
         return repository.find(id);
     }
 
+    @Transactional
     public void create(Farmer farmer) {
         repository.create(farmer);
     }
 
+    @Transactional
     public void update(Farmer farmer) {
         repository.update(farmer);
     }
 
+    @Transactional
     public void delete(UUID id) {
         repository.delete(repository.find(id).orElseThrow(
                 () -> new NotFoundException("Could not find farmer of id: " + id.toString())

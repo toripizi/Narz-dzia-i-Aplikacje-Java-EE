@@ -1,6 +1,7 @@
 package com.toripizi.farmhub.machine.repository;
 
 
+import com.toripizi.farmhub.category.entity.Category;
 import com.toripizi.farmhub.machine.entity.Machine;
 
 import java.util.List;
@@ -19,7 +20,5 @@ public interface MachineRepository {
 
     void delete(Machine machine);
 
-    List<Machine> findAllByCategoryId(UUID id);
-
-    void deleteByCategoryId(UUID id);
+    List<Machine> findAllByCategory(Category category);
 }

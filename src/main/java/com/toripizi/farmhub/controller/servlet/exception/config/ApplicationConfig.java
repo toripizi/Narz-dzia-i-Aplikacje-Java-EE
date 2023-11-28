@@ -1,4 +1,4 @@
-package com.toripizi.farmhub.category.controller;
+package com.toripizi.farmhub.controller.servlet.exception.config;
 
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;

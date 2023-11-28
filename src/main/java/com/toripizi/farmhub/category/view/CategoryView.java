@@ -58,7 +58,7 @@ public class CategoryView implements Serializable {
     public MachineryModel getMachinery() {
         if (machinery == null) {
             MachineryToModelFunction function = new MachineryToModelFunction();
-            machinery = function.apply(machineService.findAllByCategoryId(id));
+            machineService.findAllByCategoryId(id).ifPresent(machineryList -> machinery = function.apply(machineryList));
         }
         return machinery;
     }
