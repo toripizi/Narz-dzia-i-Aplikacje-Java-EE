@@ -17,6 +17,8 @@ public class MachineryToModelFunction implements Function<List<Machine>, Machine
                                 .id(machine.getId())
                                 .name(machine.getName())
                                 .horsepower(machine.getHorsepower())
+                                .version(machine.getVersion())
+                                .creationDateTime(machine.getCreationDateTime())
                                 .build())
                         .collect(Collectors.toList()))
                 .build();

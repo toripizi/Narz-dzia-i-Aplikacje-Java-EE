@@ -5,11 +5,14 @@ import com.toripizi.farmhub.machine.model.MachineEditModel;
 import com.toripizi.farmhub.machine.model.functions.MachineToEditModelFunction;
 import com.toripizi.farmhub.machine.model.functions.UpdateMachineWithModelFunction;
 import com.toripizi.farmhub.machine.service.MachineService;
+import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import jakarta.persistence.OptimisticLockException;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.TransactionalException;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,6 +25,7 @@ import java.util.UUID;
 @Named
 public class MachineEdit implements Serializable {
     private MachineService machineService;
+    private final FacesContext facesContext;
 
     @Setter
     @Getter
@@ -31,8 +35,9 @@ public class MachineEdit implements Serializable {
     private MachineEditModel machine;
 
     @Inject
-    public MachineEdit(MachineService machineService) {
+    public MachineEdit(MachineService machineService, FacesContext facesContext) {
         this.machineService = machineService;
+        this.facesContext = facesContext;
     }
 
     public void init() throws IOException {
@@ -41,13 +46,23 @@ public class MachineEdit implements Serializable {
             MachineToEditModelFunction function = new MachineToEditModelFunction();
             this.machine = function.apply(machine.get());
         } else {
-            FacesContext.getCurrentInstance().getExternalContext().responseSendError(HttpServletResponse.SC_NOT_FOUND, "Machine not found");
+            facesContext.getExternalContext().responseSendError(HttpServletResponse.SC_NOT_FOUND, "Machine not found");
         }
     }
 
-    public String saveAction() {
-        UpdateMachineWithModelFunction function = new UpdateMachineWithModelFunction();
-        machineService.update(function.apply(machineService.findForCallerPrincipal(id).orElseThrow(), machine));
-        return FacesContext.getCurrentInstance().getViewRoot().getViewId() + "?faces-redirect=true&includeViewParams=true";
+    public String saveAction() throws IOException {
+        try {
+            UpdateMachineWithModelFunction function = new UpdateMachineWithModelFunction();
+            Machine entity = machineService.findForCallerPrincipal(id).orElseThrow();
+            entity.updateCreationDateTime();
+            machineService.update(function.apply(entity, machine));
+            return FacesContext.getCurrentInstance().getViewRoot().getViewId() + "?faces-redirect=true&includeViewParams=true";
+        } catch (TransactionalException ex) {
+            if (ex.getCause() instanceof OptimisticLockException) {
+                init();
+                facesContext.addMessage(null, new FacesMessage("Version collision."));
+            }
+            return null;
+        }
     }
 }

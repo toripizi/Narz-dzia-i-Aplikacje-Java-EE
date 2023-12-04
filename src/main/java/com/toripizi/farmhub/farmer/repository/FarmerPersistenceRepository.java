@@ -1,10 +1,14 @@
 package com.toripizi.farmhub.farmer.repository;
 
 import com.toripizi.farmhub.farmer.entity.Farmer;
+import com.toripizi.farmhub.farmer.entity.Farmer_;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 
 import java.io.InputStream;
 import java.util.List;
@@ -23,7 +27,11 @@ public class FarmerPersistenceRepository implements FarmerRepository {
 
     @Override
     public List<Farmer> findAll() {
-        return em.createQuery("select f from Farmer f", Farmer.class).getResultList();
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Farmer> query = cb.createQuery(Farmer.class);
+        Root<Farmer> root = query.from(Farmer.class);
+        query.select(root);
+        return em.createQuery(query).getResultList();
     }
 
     @Override
@@ -34,9 +42,14 @@ public class FarmerPersistenceRepository implements FarmerRepository {
     @Override
     public Optional<Farmer> findByLogin(String login) {
         try {
-            return Optional.of(em.createQuery("select f from Farmer f where f.login = :login", Farmer.class)
-                    .setParameter("login", login)
-                    .getSingleResult());
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<Farmer> query = cb.createQuery(Farmer.class);
+            Root<Farmer> root = query.from(Farmer.class);
+            query.select(root)
+                    .where(cb.and(
+                            cb.equal(root.get(Farmer_.login), login)
+                    ));
+            return Optional.of(em.createQuery(query).getSingleResult());
         } catch (NoResultException ex) {
             return Optional.empty();
         }

@@ -3,6 +3,7 @@ package com.toripizi.farmhub.machine.model;
 import lombok.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,6 +26,8 @@ public class MachineryModel implements Serializable {
         private UUID id;
         private String name;
         private Integer horsepower;
+        private Long version;
+        private LocalDateTime creationDateTime;
     }
 
     @Singular("machine")

@@ -17,4 +17,5 @@ public class MachineEditModel {
     private String whenProduced;
     private Integer horsepower;
     private Category category;
+    private Long version;
 }

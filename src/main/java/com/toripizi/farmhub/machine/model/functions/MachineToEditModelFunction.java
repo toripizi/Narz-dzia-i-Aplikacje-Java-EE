@@ -15,6 +15,7 @@ public class MachineToEditModelFunction implements Function<Machine, MachineEdit
                 .name(entity.getName())
                 .whenProduced(String.valueOf(entity.getWhenProduced()))
                 .horsepower(entity.getHorsepower())
+                .version(entity.getVersion())
                 .build();
     }
 }

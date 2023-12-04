@@ -18,6 +18,8 @@ public class UpdateMachineWithModelFunction implements BiFunction<Machine, Machi
                 .horsepower(model.getHorsepower())
                 .farmer(entity.getFarmer())
                 .category(entity.getCategory())
+                .version(model.getVersion())
+                .creationDateTime(entity.getCreationDateTime())
                 .build();
     }
 }
