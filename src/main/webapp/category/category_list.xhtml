@@ -11,7 +11,7 @@
         <article class="text--justified">
             <header><h2>Categories</h2></header>
 
-            <h:dataTable value="#{categoryList.categories.categories}" var="category"
+            <h:dataTable id="categoryTable" value="#{categoryList.categories.categories}" var="category"
                          styleClass="table align-middle mb-0 bg-super-light" headerClass="bg-dark text-light">
 
                 <h:column>
@@ -30,7 +30,10 @@
                     <f:facet name="header">Delete</f:facet>
                     <h:form>
                         <h:commandButton styleClass="btn btn-danger" value="Delete"
-                                         action="#{categoryList.deleteAction(category)}"/>
+                                         disabled="#{!facesContext.externalContext.isUserInRole('admin')}"
+                                         actionListener="#{categoryList.deleteAction(category)}">
+                            <f:ajax execute="@this" render=":categoryTable"/>
+                        </h:commandButton>
                     </h:form>
                 </h:column>
 

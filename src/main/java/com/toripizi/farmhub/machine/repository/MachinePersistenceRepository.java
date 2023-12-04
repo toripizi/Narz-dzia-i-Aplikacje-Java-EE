@@ -3,6 +3,7 @@ package com.toripizi.farmhub.machine.repository;
 import com.toripizi.farmhub.category.entity.Category;
 import com.toripizi.farmhub.farmer.entity.Farmer;
 import com.toripizi.farmhub.machine.entity.Machine;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.Dependent;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Dependent
+@ApplicationScoped
 public class MachinePersistenceRepository implements MachineRepository {
     private EntityManager em;
 
@@ -78,5 +79,10 @@ public class MachinePersistenceRepository implements MachineRepository {
     @Override
     public void delete(Machine entity) {
         em.remove(em.find(Machine.class, entity.getId()));
+    }
+
+    @Override
+    public void detach(Machine entity) {
+        em.detach(entity);
     }
 }

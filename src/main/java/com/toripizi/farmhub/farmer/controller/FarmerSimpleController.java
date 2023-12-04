@@ -8,11 +8,9 @@ import com.toripizi.farmhub.farmer.dto.GetFarmersResponse;
 import com.toripizi.farmhub.farmer.dto.UpdateFarmerRequest;
 import com.toripizi.farmhub.farmer.entity.Farmer;
 import com.toripizi.farmhub.farmer.service.FarmerService;
-import com.toripizi.farmhub.machine.dto.CreateMachineRequest;
 import com.toripizi.farmhub.machine.dto.GetMachineryResponse;
 import com.toripizi.farmhub.machine.entity.Machine;
 import com.toripizi.farmhub.machine.service.MachineService;
-import jakarta.ejb.EJB;
 import jakarta.inject.Inject;
 import jakarta.security.enterprise.identitystore.Pbkdf2PasswordHash;
 import jakarta.ws.rs.Path;
@@ -31,16 +29,11 @@ public class FarmerSimpleController implements FarmerController {
     @Inject
     public Pbkdf2PasswordHash passwordHash;
     @Inject
-    public FarmerSimpleController(Pbkdf2PasswordHash passwordHash) {
+    public FarmerSimpleController(FarmerService service, MachineService machineService, Pbkdf2PasswordHash passwordHash) {
+        this.service = service;
+        this.machineService = machineService;
         this.passwordHash = passwordHash;
     }
-
-    @EJB
-    public void setService(FarmerService service) { this.service = service; }
-
-    @EJB
-    public void setMachineService(MachineService machineService) { this.machineService = machineService; }
-
 
     @Override
     public GetFarmersResponse getFarmers() {

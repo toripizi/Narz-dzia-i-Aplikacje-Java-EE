@@ -1,75 +1,57 @@
-package com.toripizi.farmhub.configuration.singleton;
+package com.toripizi.farmhub.configuration.observer;
 
 import com.toripizi.farmhub.category.entity.Category;
-import com.toripizi.farmhub.category.service.CategoryService;
+import com.toripizi.farmhub.category.repository.CategoryRepository;
 import com.toripizi.farmhub.farmer.entity.Farmer;
 import com.toripizi.farmhub.farmer.entity.FarmerRoles;
-import com.toripizi.farmhub.farmer.service.FarmerService;
+import com.toripizi.farmhub.farmer.repository.FarmerRepository;
 import com.toripizi.farmhub.machine.entity.Machine;
-import com.toripizi.farmhub.machine.service.MachineService;
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.security.DeclareRoles;
-import jakarta.annotation.security.RunAs;
-import jakarta.ejb.*;
+import com.toripizi.farmhub.machine.repository.MachineRepository;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.Initialized;
+import jakarta.enterprise.context.control.RequestContextController;
+import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
-import jakarta.security.enterprise.SecurityContext;
 import jakarta.security.enterprise.identitystore.Pbkdf2PasswordHash;
-import lombok.NoArgsConstructor;
+import jakarta.transaction.Transactional;
 import lombok.SneakyThrows;
-import lombok.extern.java.Log;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-@Singleton
-@Startup
-@TransactionAttribute(value = TransactionAttributeType.NOT_SUPPORTED)
-@NoArgsConstructor
-@DependsOn("InitializeAdminService")
-@DeclareRoles({FarmerRoles.ADMIN, FarmerRoles.USER})
-@RunAs(FarmerRoles.ADMIN)
-@Log
+@ApplicationScoped
 public class InitializedData {
 
-    private CategoryService categoryService;
-    private FarmerService farmerService;
-    private MachineService machineService;
-
-//    @Inject
-//    private RequestContextController requestContextController;
-
-    private SecurityContext securityContext;
-    private Pbkdf2PasswordHash passwordHash;
+    private final FarmerRepository farmerRepository;
+    private final CategoryRepository categoryRepository;
+    private final MachineRepository machineRepository;
+    private final Pbkdf2PasswordHash passwordHash;
+    private final RequestContextController requestContextController;
 
     @Inject
-    public InitializedData(SecurityContext securityContext, Pbkdf2PasswordHash passwordHash) {
-        this.securityContext = securityContext;
+    public InitializedData(FarmerRepository farmerRepository,
+                           CategoryRepository categoryRepository,
+                           MachineRepository machineRepository,
+                           @SuppressWarnings("CdiInjectionPointsInspection") Pbkdf2PasswordHash passwordHash,
+                           RequestContextController requestContextController) {
+        this.farmerRepository = farmerRepository;
+        this.categoryRepository = categoryRepository;
+        this.machineRepository = machineRepository;
         this.passwordHash = passwordHash;
+        this.requestContextController = requestContextController;
     }
-
-    @EJB
-    public void setCategoryService(CategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
-
-    @EJB
-    public void setFarmerService(FarmerService farmerService) {
-        this.farmerService = farmerService;
-    }
-
-    @EJB
-    public void setMachineService(MachineService machineService) {
-        this.machineService = machineService;
+    @Transactional
+    public void contextInitialized(@Observes @Initialized(ApplicationScoped.class) Object init) {
+        init();
     }
 
 
-    @PostConstruct
     @SneakyThrows
     private void init() {
+        requestContextController.activate();
 
-        if (farmerService.find("farmer1").isEmpty()) {
-//            requestContextController.activate();
+        if (farmerRepository.findByLogin("farmer1").isEmpty()) {
 
             /* create Farmers */
             Farmer farmer1 = Farmer.builder()
@@ -161,27 +143,27 @@ public class InitializedData {
                     .farmer(farmer3)
                     .build();
 
-            farmerService.findAll().forEach(farmer -> farmerService.delete(farmer.getId()));
-            categoryService.findAll().forEach(category -> categoryService.delete(category.getId()));
-            machineService.findAll().forEach(machine -> machineService.delete(machine.getId()));
+            farmerRepository.findAll().forEach(farmerRepository::delete);
+            categoryRepository.findAll().forEach(categoryRepository::delete);
+            machineRepository.findAll().forEach(machineRepository::delete);
 
 
-            farmerService.create(farmer1);
-            farmerService.create(farmer2);
-            farmerService.create(farmer3);
-            farmerService.create(farmer4);
+            farmerRepository.create(farmer1);
+            farmerRepository.create(farmer2);
+            farmerRepository.create(farmer3);
+            farmerRepository.create(farmer4);
 
-            categoryService.create(ciagniki);
-            categoryService.create(kombajny);
-            categoryService.create(plugi);
-            categoryService.create(kultywatory);
+            categoryRepository.create(ciagniki);
+            categoryRepository.create(kombajny);
+            categoryRepository.create(plugi);
+            categoryRepository.create(kultywatory);
 
-            machineService.create(ursus_1634);
-            machineService.create(zetor);
-            machineService.create(gruber);
-            machineService.create(new_holland_5070);
+            machineRepository.create(ursus_1634);
+            machineRepository.create(zetor);
+            machineRepository.create(gruber);
+            machineRepository.create(new_holland_5070);
 
-//            requestContextController.deactivate();
         }
+        requestContextController.deactivate();
     }
 }

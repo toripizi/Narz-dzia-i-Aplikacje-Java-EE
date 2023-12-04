@@ -3,23 +3,22 @@ package com.toripizi.farmhub.machine.view;
 import com.toripizi.farmhub.machine.model.MachineryModel;
 import com.toripizi.farmhub.machine.model.functions.MachineryToModelFunction;
 import com.toripizi.farmhub.machine.service.MachineService;
-import jakarta.ejb.EJB;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
+import java.io.Serializable;
+
 @RequestScoped
 @Named
-public class MachineList {
+public class MachineList implements Serializable {
     private MachineService machineService;
 
     private MachineryModel machinery;
 
-    @EJB
-    public void setMachineService(MachineService machineService) {this.machineService = machineService;}
-
     @Inject
-    public MachineList(MachineryModel machinery) {
+    public MachineList(MachineService machineService, MachineryModel machinery) {
+        this.machineService = machineService;
         this.machinery = machinery;
     }
 
@@ -31,8 +30,8 @@ public class MachineList {
         return machinery;
     }
 
-    public String deleteAction(MachineryModel.Machine machine) {
+    public void deleteAction(MachineryModel.Machine machine) {
         machineService.delete(machine.getId());
-        return "machine_list?faces-redirect=true";
+        machinery.setMachinery(null);
     }
 }

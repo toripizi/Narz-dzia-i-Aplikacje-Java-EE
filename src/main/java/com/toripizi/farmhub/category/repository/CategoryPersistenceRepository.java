@@ -1,6 +1,7 @@
 package com.toripizi.farmhub.category.repository;
 
 import com.toripizi.farmhub.category.entity.Category;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.persistence.EntityManager;
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Dependent
+@ApplicationScoped
 public class CategoryPersistenceRepository implements CategoryRepository {
 
     private EntityManager em;
@@ -46,5 +47,10 @@ public class CategoryPersistenceRepository implements CategoryRepository {
         em.getEntityManagerFactory().getCache().evictAll(); //Clearing 2nd level cache.
         em.clear(); //Clearing 1st level cache.
         em.remove(em.find(Category.class, entity.getId()));
+    }
+
+    @Override
+    public void detach(Category entity) {
+        em.detach(entity);
     }
 }

@@ -10,19 +10,8 @@
         <feature>persistence-3.1</feature>
         <feature>enterpriseBeans-4.0</feature>
         <feature>appSecurity-5.0</feature>
+        <feature>websocket-2.1</feature>
     </featureManager>
-
-    <application type="war" location="farmhub-1.0-SNAPSHOT.war">
-        <application-bnd>
-            <security-role name="admin">
-                <group name="admin" access-id="group:jdbc/farmhub/admin"/>
-                <run-as userid="admin-service"/>
-            </security-role>
-            <security-role name="user">
-                <group name="user" access-id="group:jdbc/farmhub/user"/>
-            </security-role>
-        </application-bnd>
-    </application>
 
     <dataSource id="FarmHubDataSource" jndiName="jdbc/farmhub">
         <jdbcDriver javax.sql.XADataSource="org.h2.jdbcx.JdbcDataSource"

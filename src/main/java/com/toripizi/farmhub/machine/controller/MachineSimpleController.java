@@ -9,7 +9,6 @@ import com.toripizi.farmhub.machine.dto.GetMachineResponse;
 import com.toripizi.farmhub.machine.dto.UpdateMachineRequest;
 import com.toripizi.farmhub.machine.entity.Machine;
 import com.toripizi.farmhub.machine.service.MachineService;
-import jakarta.ejb.EJB;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -27,13 +26,11 @@ public class MachineSimpleController implements MachineController {
     @PathParam("categoryId")
     private String categoryId;
 
-    @EJB
-    public void setCategoryService(MachineService machineService) {
+    @Inject
+    public MachineSimpleController(MachineService machineService, CategoryService categoryService) {
         this.machineService = machineService;
+        this.categoryService = categoryService;
     }
-
-    @EJB
-    public void setMachineService(CategoryService categoryService) { this.categoryService = categoryService; }
 
     @Override
     public GetMachineryResponse getMachinery() {

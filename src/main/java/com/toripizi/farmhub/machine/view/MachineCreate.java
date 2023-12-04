@@ -7,7 +7,6 @@ import com.toripizi.farmhub.category.service.CategoryService;
 import com.toripizi.farmhub.machine.model.MachineCreateModel;
 import com.toripizi.farmhub.machine.model.functions.ModelToMachineFunction;
 import com.toripizi.farmhub.machine.service.MachineService;
-import jakarta.ejb.EJB;
 import jakarta.enterprise.context.Conversation;
 import jakarta.enterprise.context.ConversationScoped;
 import jakarta.inject.Inject;
@@ -38,14 +37,10 @@ public class MachineCreate implements Serializable {
 
     private final Conversation conversation;
 
-    @EJB
-    public void setMachineService(MachineService machineService) {this.machineService = machineService;}
-
-    @EJB
-    public void setCategoryService(CategoryService categoryService) {this.categoryService = categoryService;}
-
     @Inject
-    public MachineCreate(Conversation conversation) {
+    public MachineCreate(MachineService machineService, CategoryService categoryService, Conversation conversation) {
+        this.machineService = machineService;
+        this.categoryService = categoryService;
         this.conversation = conversation;
     }
 

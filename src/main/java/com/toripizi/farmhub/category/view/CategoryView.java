@@ -8,7 +8,6 @@ import com.toripizi.farmhub.machine.entity.Machine;
 import com.toripizi.farmhub.machine.model.MachineryModel;
 import com.toripizi.farmhub.machine.model.functions.MachineryToModelFunction;
 import com.toripizi.farmhub.machine.service.MachineService;
-import jakarta.ejb.EJB;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
@@ -26,14 +25,8 @@ import java.util.UUID;
 @ViewScoped
 @Named
 public class CategoryView implements Serializable {
-    private CategoryService categoryService;
-    private MachineService machineService;
-
-    @EJB
-    public void setCategoryService(CategoryService categoryService) { this.categoryService = categoryService; }
-
-    @EJB
-    public void setMachineService(MachineService machineService) { this.machineService = machineService; }
+    private final CategoryService categoryService;
+    private final MachineService machineService;
 
     @Setter
     @Getter
@@ -46,6 +39,12 @@ public class CategoryView implements Serializable {
     @Setter
     @Getter
     private MachineryModel machinery;
+
+    @Inject
+    public CategoryView(CategoryService categoryService, MachineService machineService) {
+        this.categoryService = categoryService;
+        this.machineService = machineService;
+    }
 
     public void init() throws IOException {
         Optional<Category> category = categoryService.find(id);

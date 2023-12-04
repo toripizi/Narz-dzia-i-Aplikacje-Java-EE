@@ -1,8 +1,7 @@
 package com.toripizi.farmhub.farmer.repository;
 
 import com.toripizi.farmhub.farmer.entity.Farmer;
-import jakarta.enterprise.context.Dependent;
-import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
@@ -12,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Dependent
+@ApplicationScoped
 public class FarmerPersistenceRepository implements FarmerRepository {
 
     private EntityManager em;
@@ -75,4 +74,10 @@ public class FarmerPersistenceRepository implements FarmerRepository {
     public void deleteAvatar(UUID id) {
 
     }
+
+    @Override
+    public void detach(Farmer entity) {
+        em.detach(entity);
+    }
+
 }

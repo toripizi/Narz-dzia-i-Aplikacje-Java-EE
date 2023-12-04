@@ -28,4 +28,6 @@ public interface MachineRepository {
     void update(Machine machine);
 
     void delete(Machine machine);
+
+    void detach(Machine machine);
 }

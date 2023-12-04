@@ -26,4 +26,6 @@ public interface FarmerRepository {
     void updateAvatar(UUID id, InputStream is);
 
     void deleteAvatar(UUID id);
+
+    void detach(Farmer user);
 }
